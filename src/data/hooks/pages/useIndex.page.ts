@@ -20,15 +20,29 @@ export default function useIndex() {
     setErro("");
 
     try {
-      await ApiService.get(
-        "/api/diaristas-cidade?cep=" + cep.replace(/\D/g, "")
-      );
+      const { data } = await ApiService.get<{
+        diaristas: UserShortInterface[];
+        quantidade_diaristas: number;
+      }>("/api/diaristas-cidade?cep=" + cep.replace(/\D/g, ""));
+      setDiaristas(data.diaristas);
+      setDiaristasRestantes(data.quantidade_diaristas);
+      setBuscaFeita(true);
+      setCarregando(false);
     } catch (error) {
       setErro("CEP não encontrado");
       setCarregando(false);
     }
-    setBuscaFeita(true);
   }
 
-  return { cep, setCep, cepValido };
+  return {
+    cep,
+    setCep,
+    cepValido,
+    buscarProfissionais,
+    erro,
+    diaristas,
+    buscaFeita,
+    carregando,
+    diaristasRestantes,
+  };
 }
